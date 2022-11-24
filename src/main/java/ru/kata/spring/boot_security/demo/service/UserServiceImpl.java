@@ -1,62 +1,76 @@
 package ru.kata.spring.boot_security.demo.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.DAO.UserDAO;
+import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
-import ru.kata.spring.boot_security.demo.repository.UserJpaRepository;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-@Transactional
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserJpaRepository userJpaRepository;
+    private final UserDAO userDAO;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserJpaRepository userJpaRepository) {
-        this.userJpaRepository = userJpaRepository;
+    public UserServiceImpl(UserDAO userDAO, RoleService roleService, PasswordEncoder passwordEncoder) {
+        this.userDAO = userDAO;
+        this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
+        addDefaultUser();
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userJpaRepository.findByName(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("Invalid username or password.");
-        }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),
-                user.getPassword(), user.getAuthorities());
+    public User passwordCoder(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return user;
     }
 
     @Override
     public List<User> getAllUsers() {
-        return userJpaRepository.findAll();
+        return userDAO.getAllUsers();
     }
 
     @Override
-    public void saveUser(User user) {
-        userJpaRepository.save(user);
+    public User getUserById(long id) {
+        return userDAO.getUserById(id);
     }
 
     @Override
-    public void delete(Long id) {
-        userJpaRepository.deleteById(id);
+    public void addUser(User user) {
+        userDAO.addUser(passwordCoder(user));
     }
 
     @Override
-    public User getById(Long id) {
-        return userJpaRepository.getById(id);
+    public void removeUser(long id) {
+        userDAO.removeUser(id);
     }
 
     @Override
-    public User getAuthUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return userJpaRepository.findByName(auth.getName());
+    public void updateUser(User user) {
+        userDAO.updateUser(passwordCoder(user));
+    }
+
+    @Override
+    public User getUserByLogin(String username) {
+        return userDAO.getUserByLogin(username);
+    }
+
+    @Override
+    public void addDefaultUser() {
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(roleService.findById(1L));
+        Set<Role> roleSet2 = new HashSet<>();
+        roleSet2.add(roleService.findById(1L));
+        roleSet2.add(roleService.findById(2L));
+        User user1 = new User("Garry", "Potter", (byte) 27, "user1@mail.ru", "user1", "12345", roleSet);
+        User user2 = new User("Steve", "Jobs", (byte) 52, "admin@mail.ru", "admin", "admin", roleSet2);
+        addUser(user1);
+        addUser(user2);
     }
 }
-
