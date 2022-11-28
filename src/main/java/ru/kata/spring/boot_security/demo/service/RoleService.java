@@ -10,4 +10,6 @@ public interface RoleService {
     Role getByName(String name);
 
     void saveRole(Role role);
+
+
 }

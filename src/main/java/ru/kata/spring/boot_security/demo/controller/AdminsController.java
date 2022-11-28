@@ -39,15 +39,15 @@ public class AdminsController {
     }
 
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") User user, @PathVariable("id") int id, @RequestParam String[] roles1) {
-        List<Role> listroles = new ArrayList<>();
-        for (String s : roles1) {
-            listroles.add(roleService.getByName(s));
-        }
-        user.setRoles(listroles);
-        userService.updateUser(user);
+    public String updateUser(User user, @RequestParam String[] roles) {
+        userService.updateUser(user, roles);
         return "redirect:/admin";
     }
+    /*public String update(@ModelAttribute("user") User user, @PathVariable("id") int id) {
+
+        userService.updateUser(user);
+        return "redirect:/admin";
+    }*/
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {
@@ -63,13 +63,8 @@ public class AdminsController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute("user") User user, @RequestParam String[] roles1) {
-        List<Role> listroles = new ArrayList<>();
-        for (String s : roles1) {
-            listroles.add(roleService.getByName(s));
-        }
-        user.setRoles(listroles);
-        userService.addUser(user);
+    public String create(@ModelAttribute("user") User user, @RequestParam String[] roles) {
+        userService.addUser(user, roles);
         return "redirect:/admin";
     }
 }

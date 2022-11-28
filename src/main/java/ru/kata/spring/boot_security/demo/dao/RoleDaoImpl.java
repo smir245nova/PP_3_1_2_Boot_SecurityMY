@@ -25,7 +25,6 @@ public class RoleDaoImpl implements RoleDao {
                 .setParameter("name", name).getSingleResult();
     }
 
-    @Transactional
     @Override
     public void saveRole(Role role) {
         entityManager.persist(role);
