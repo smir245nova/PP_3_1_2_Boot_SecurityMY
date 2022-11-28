@@ -4,13 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -43,11 +40,7 @@ public class AdminsController {
         userService.updateUser(user, roles);
         return "redirect:/admin";
     }
-    /*public String update(@ModelAttribute("user") User user, @PathVariable("id") int id) {
 
-        userService.updateUser(user);
-        return "redirect:/admin";
-    }*/
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {
