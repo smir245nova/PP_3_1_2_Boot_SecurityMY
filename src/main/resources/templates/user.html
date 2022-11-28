@@ -1,27 +1,21 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-    <title>Spring Security Example</title>
+    <title>Personal data</title>
 </head>
 <body>
-<h1>User, welcome!</h1>
-<br><br>
-<br><br>
-<table th:border="1">
-    <tr>
-        <th>Id</th>
-        <th>Name</th>
-        <th>Surname</th>
-        <th>Email</th>
-        <th>Phone</th>
-    </tr>
-    <tr th:object="${user}">
-        <td th:text="${user.getName()}">Name</td>
-        <td th:text="${user.getSurname()}">Surname</td>
-        <td th:text="${user.getEmail()}">Email</td>
-        <td th:text="${user.getPhone()}">Phone</td>
-    </tr>
-</table>
-<a th:href="@{/logout}">Logout</a>
+<p>Your personal data:</p>
+<p>Name: <span th:text="${user.getName()}"></span></p>
+<p>Lastname: <span th:text="${user.getLastName()}"></span></p>
+<p>Username: <span th:text="${user.getUsername()}"></span></p>
+<p>Password: <span th:text="${user.getPassword()}"></span></p>
+<p>Role: <div th:each="role : ${user.getRoles()}">
+    <div th:utext="${role.getName()}"> </div>
+</div></p>
+
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Log out"/>
+</form>
 </body>
 </html>
+
